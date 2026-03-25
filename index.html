@@ -2,70 +2,73 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- Base Mini App stuff (needed for verification) -->
   <meta name="talentapp:project_verification" content="717a427fcc02af8d33bc8d28e782b6bd6925ca3284c54b1ad76f72305ab1e6368d57ca2b1c640a023ab9b3776fd60a8d860f9bfac11e3de73ade462e1a88ab63">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Tic Tac Toe · Base Mini App</title>
+  <title>Tic Tac Toe · Base</title>
   <meta name="base:app_id" content="6994b645e0d5d2cf831b5f39">
   <script src="https://unpkg.com/@base-org/miniapp-sdk/dist/index.umd.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    /* i like clean but not too fancy */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
-    /* light mode (default) */
+    /* light theme */
     body {
-      --bg: #f0f2f5;
-      --card: #ffffffdd;
-      --text: #1e293b;
-      --text-light: #475569;
-      --x-color: #e53e3e;
-      --o-color: #3182ce;
-      --board-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
-      --cell-bg: white;
-      --cell-hover: #f9f9ff;
-      --modal-bg: rgba(0,0,0,0.6);
-      --modal-card: white;
+      --bg: #eef2f5;
+      --card: rgba(255,255,255,0.9);
+      --text: #1f2a44;
+      --textSoft: #4a5568;
+      --xCol: #e53e3e;
+      --oCol: #3182ce;
+      --shadow: 0 8px 20px rgba(0,0,0,0.1);
+      --cellBg: white;
+      --cellHover: #f7fafc;
+      --modalBg: rgba(0,0,0,0.6);
+      --modalCard: white;
     }
 
     body.dark {
-      --bg: #0f172a;
-      --card: #1e293bdd;
-      --text: #f1f5f9;
-      --text-light: #cbd5e1;
-      --x-color: #f87171;
-      --o-color: #60a5fa;
-      --board-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
-      --cell-bg: #2d3a4f;
-      --cell-hover: #3b4a62;
-      --modal-bg: rgba(0,0,0,0.8);
-      --modal-card: #1e293b;
+      --bg: #0b1120;
+      --card: #1a253cdd;
+      --text: #e2e8f0;
+      --textSoft: #94a3b8;
+      --xCol: #f87171;
+      --oCol: #60a5fa;
+      --shadow: 0 8px 20px rgba(0,0,0,0.3);
+      --cellBg: #1e2a3a;
+      --cellHover: #2d3e55;
+      --modalBg: rgba(0,0,0,0.8);
+      --modalCard: #1e293b;
     }
 
     body {
       background: var(--bg);
-      font-family: system-ui, 'Segoe UI', 'Inter', sans-serif;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
       min-height: 100vh;
       display: flex;
-      justify-content: center;
       align-items: center;
-      padding: 1rem;
+      justify-content: center;
+      padding: 1.2rem;
       transition: background 0.2s;
     }
 
-    .game-box {
+    .gameWrap {
       max-width: 500px;
       width: 100%;
       background: var(--card);
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
       border-radius: 2rem;
-      padding: 1.5rem;
-      box-shadow: 0 20px 35px -10px rgba(0,0,0,0.2);
+      padding: 1.6rem;
+      box-shadow: var(--shadow);
     }
 
-    .top-bar {
+    /* header with dark mode button */
+    .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -73,74 +76,69 @@
     }
 
     h1 {
-      font-size: 1.8rem;
-      background: linear-gradient(135deg, var(--x-color), var(--o-color));
+      font-size: 1.7rem;
+      background: linear-gradient(135deg, var(--xCol), var(--oCol));
       background-clip: text;
       -webkit-background-clip: text;
       color: transparent;
     }
 
-    #darkBtn {
+    #darkToggle {
       background: none;
       border: none;
       font-size: 1.4rem;
       cursor: pointer;
-      color: var(--text-light);
-      padding: 0.4rem;
+      color: var(--textSoft);
+      padding: 0.3rem;
       border-radius: 50%;
-      transition: 0.2s;
     }
 
-    #darkBtn:hover {
-      background: rgba(128,128,128,0.2);
-    }
-
-    .mode-switch {
+    /* mode switcher */
+    .modeSelect {
       display: flex;
-      gap: 0.8rem;
+      gap: 0.7rem;
       background: rgba(0,0,0,0.05);
       border-radius: 3rem;
-      padding: 0.25rem;
+      padding: 0.2rem;
       margin-bottom: 1rem;
     }
 
-    .mode {
+    .modeBtn {
       flex: 1;
       text-align: center;
       padding: 0.5rem;
       border-radius: 2rem;
       font-weight: 600;
       cursor: pointer;
-      transition: 0.2s;
-      color: var(--text-light);
+      color: var(--textSoft);
     }
 
-    .mode.active {
-      background: var(--o-color);
+    .modeBtn.active {
+      background: var(--oCol);
       color: white;
       box-shadow: 0 2px 8px rgba(59,130,246,0.3);
     }
 
-    .diff {
+    .diffControl {
       margin: 0.5rem 0 1rem;
       display: none;
       justify-content: center;
     }
 
-    .diff.visible {
+    .diffControl.visible {
       display: flex;
     }
 
     select {
-      background: var(--cell-bg);
+      background: var(--cellBg);
       color: var(--text);
-      border: 1px solid var(--text-light);
+      border: 1px solid var(--textSoft);
       border-radius: 2rem;
       padding: 0.4rem 1rem;
-      font-weight: 500;
     }
 
-    .score-panel {
+    /* scores */
+    .scoreRow {
       display: flex;
       justify-content: space-between;
       background: rgba(0,0,0,0.05);
@@ -149,24 +147,24 @@
       margin-bottom: 1.5rem;
     }
 
-    .score {
+    .scoreBlock {
       text-align: center;
     }
 
-    .score span:first-child {
-      font-size: 0.75rem;
+    .scoreBlock span:first-child {
+      font-size: 0.7rem;
       text-transform: uppercase;
-      color: var(--text-light);
+      color: var(--textSoft);
     }
 
-    .score .val {
+    .scoreNum {
       font-size: 1.8rem;
       font-weight: bold;
       line-height: 1;
     }
 
-    .val.x { color: var(--x-color); }
-    .val.o { color: var(--o-color); }
+    .xScore { color: var(--xCol); }
+    .oScore { color: var(--oCol); }
 
     .status {
       text-align: center;
@@ -179,45 +177,44 @@
     .board {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 0.8rem;
+      gap: 0.7rem;
       margin-bottom: 1.8rem;
     }
 
     .cell {
       aspect-ratio: 1;
-      background: var(--cell-bg);
+      background: var(--cellBg);
       border-radius: 1.2rem;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 3rem;
       font-weight: bold;
-      box-shadow: var(--board-shadow);
+      box-shadow: var(--shadow);
       cursor: pointer;
-      transition: 0.1s linear;
+      transition: 0.05s linear;
       color: var(--text);
     }
 
-    .cell.x { color: var(--x-color); }
-    .cell.o { color: var(--o-color); }
-
+    .cell.x { color: var(--xCol); }
+    .cell.o { color: var(--oCol); }
     .cell.win {
       background: #4ade8033;
       border: 2px solid #4ade80;
     }
 
     .cell:active {
-      transform: scale(0.97);
+      transform: scale(0.96);
     }
 
-    .actions {
+    .actionBtns {
       display: flex;
       gap: 1rem;
       justify-content: center;
     }
 
     button {
-      background: var(--cell-bg);
+      background: var(--cellBg);
       border: none;
       padding: 0.6rem 1.2rem;
       border-radius: 2rem;
@@ -230,51 +227,51 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
-    #newGameBtn {
-      background: var(--o-color);
+    #newGame {
+      background: var(--oCol);
       color: white;
     }
 
     /* modal */
-    .modal {
+    .popup {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: var(--modal-bg);
-      backdrop-filter: blur(5px);
+      background: var(--modalBg);
+      backdrop-filter: blur(4px);
       display: flex;
       align-items: center;
       justify-content: center;
       visibility: hidden;
       opacity: 0;
       transition: 0.2s;
-      z-index: 999;
+      z-index: 1000;
     }
 
-    .modal.show {
+    .popup.show {
       visibility: visible;
       opacity: 1;
     }
 
-    .modal-content {
-      background: var(--modal-card);
+    .popupCard {
+      background: var(--modalCard);
       border-radius: 2rem;
       padding: 1.5rem;
       text-align: center;
       width: 280px;
     }
 
-    .modal-icon {
+    .popupIcon {
       font-size: 3rem;
     }
 
-    .modal-message {
+    .popupMsg {
       font-size: 1.6rem;
       font-weight: bold;
       margin: 0.5rem 0;
     }
 
-    .modal-buttons {
+    .popupButtons {
       display: flex;
       gap: 0.8rem;
       justify-content: center;
@@ -284,35 +281,34 @@
 </head>
 <body>
 
-<div class="game-box">
-  <div class="top-bar">
+<div class="gameWrap">
+  <div class="header">
     <h1>✖️ Tic Tac Toe</h1>
-    <button id="darkBtn"><i class="fas fa-moon"></i></button>
+    <button id="darkToggle"><i class="fas fa-moon"></i></button>
   </div>
 
-  <div class="mode-switch">
-    <div class="mode active" id="friendMode">👥 2 Players</div>
-    <div class="mode" id="computerMode">🤖 vs CPU</div>
+  <div class="modeSelect">
+    <div class="modeBtn active" id="friendBtn">👥 2 Players</div>
+    <div class="modeBtn" id="cpuBtn">🤖 vs CPU</div>
   </div>
 
-  <div class="diff" id="diffBox">
-    <select id="difficultySelect">
+  <div class="diffControl" id="diffPanel">
+    <select id="diffSelect">
       <option value="easy">Easy</option>
       <option value="medium" selected>Medium</option>
       <option value="hard">Hard</option>
     </select>
   </div>
 
-  <div class="score-panel">
-    <div class="score"><span>X wins</span><div class="val x" id="xScore">0</div></div>
-    <div class="score"><span>Draws</span><div class="val" id="drawScore">0</div></div>
-    <div class="score"><span>O wins</span><div class="val o" id="oScore">0</div></div>
+  <div class="scoreRow">
+    <div class="scoreBlock"><span>X wins</span><div class="scoreNum xScore" id="xScore">0</div></div>
+    <div class="scoreBlock"><span>Draws</span><div class="scoreNum" id="drawScore">0</div></div>
+    <div class="scoreBlock"><span>O wins</span><div class="scoreNum oScore" id="oScore">0</div></div>
   </div>
 
   <div class="status" id="statusMsg">X's turn</div>
 
   <div class="board" id="board">
-    <!-- 9 cells will be generated by js? no, but we'll just write them manually -->
     <div class="cell" data-idx="0"></div>
     <div class="cell" data-idx="1"></div>
     <div class="cell" data-idx="2"></div>
@@ -324,69 +320,68 @@
     <div class="cell" data-idx="8"></div>
   </div>
 
-  <div class="actions">
-    <button id="newGameBtn"><i class="fas fa-redo-alt"></i> New Game</button>
-    <button id="resetScoresBtn"><i class="fas fa-trash-alt"></i> Reset</button>
+  <div class="actionBtns">
+    <button id="newGame"><i class="fas fa-redo-alt"></i> New Game</button>
+    <button id="resetScores"><i class="fas fa-trash-alt"></i> Reset</button>
   </div>
 </div>
 
-<!-- popup modal -->
-<div id="winnerModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-icon" id="modalIcon">🎉</div>
-    <div class="modal-message" id="modalMsg">Winner!</div>
-    <div class="modal-buttons">
-      <button id="modalCloseBtn">Close</button>
-      <button id="modalPlayAgainBtn" style="background: var(--o-color); color:white;">Play again</button>
+<!-- popup -->
+<div id="winnerPopup" class="popup">
+  <div class="popupCard">
+    <div class="popupIcon" id="popupIcon">🎉</div>
+    <div class="popupMsg" id="popupMsg">Winner!</div>
+    <div class="popupButtons">
+      <button id="closePopup">Close</button>
+      <button id="playAgainPopup" style="background: var(--oCol); color:white;">Play again</button>
     </div>
   </div>
 </div>
 
 <script>
-  // ----- DOM elements -----
+  // ----- grab all elements -----
   const cells = document.querySelectorAll('.cell');
   const statusDiv = document.getElementById('statusMsg');
   const xScoreSpan = document.getElementById('xScore');
   const drawSpan = document.getElementById('drawScore');
   const oScoreSpan = document.getElementById('oScore');
-  const newGameBtn = document.getElementById('newGameBtn');
-  const resetBtn = document.getElementById('resetScoresBtn');
-  const friendMode = document.getElementById('friendMode');
-  const computerMode = document.getElementById('computerMode');
-  const diffBox = document.getElementById('diffBox');
-  const diffSelect = document.getElementById('difficultySelect');
-  const darkBtn = document.getElementById('darkBtn');
-  const modal = document.getElementById('winnerModal');
-  const modalMsg = document.getElementById('modalMsg');
-  const modalIcon = document.getElementById('modalIcon');
-  const modalClose = document.getElementById('modalCloseBtn');
-  const modalPlayAgain = document.getElementById('modalPlayAgainBtn');
+  const newGameBtn = document.getElementById('newGame');
+  const resetScoresBtn = document.getElementById('resetScores');
+  const friendBtn = document.getElementById('friendBtn');
+  const cpuBtn = document.getElementById('cpuBtn');
+  const diffPanel = document.getElementById('diffPanel');
+  const diffSelect = document.getElementById('diffSelect');
+  const darkToggle = document.getElementById('darkToggle');
+  const popup = document.getElementById('winnerPopup');
+  const popupIconSpan = document.getElementById('popupIcon');
+  const popupMsgSpan = document.getElementById('popupMsg');
+  const closePopupBtn = document.getElementById('closePopup');
+  const playAgainPopupBtn = document.getElementById('playAgainPopup');
 
-  // game state
-  let board = ['', '', '', '', '', '', '', '', ''];
-  let currentPlayer = 'X';   // X always starts
-  let gameActive = true;
-  let vsCPU = false;          // friend mode by default
+  // ---- game state (a bit messy but works) ----
+  let boardState = ['', '', '', '', '', '', '', '', ''];
+  let turn = 'X';           // X always starts
+  let gameLive = true;
+  let vsComputer = false;   // friend mode default
   let difficulty = 'medium';
   let scores = { X: 0, O: 0, draws: 0 };
 
-  // win combos
-  const wins = [
+  // winning combos (old school)
+  const winPatterns = [
     [0,1,2], [3,4,5], [6,7,8],
     [0,3,6], [1,4,7], [2,5,8],
     [0,4,8], [2,4,6]
   ];
 
-  // ---- audio (simple web audio) ----
-  let audioAllowed = false;
+  // ---- simple audio (beep on win/draw) ----
   let audioCtx = null;
   function initAudio() {
     if (audioCtx) return;
     try {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    } catch(e) { console.log('no audio'); }
+    } catch(e) { /* no biggie */ }
   }
-  function playSound(type) {
+  function playBeep(type) {
     if (!audioCtx) return;
     if (audioCtx.state === 'suspended') audioCtx.resume();
     let osc = audioCtx.createOscillator();
@@ -394,35 +389,35 @@
     osc.connect(gain);
     gain.connect(audioCtx.destination);
     osc.type = 'sine';
-    let freq = type === 'win' ? 880 : 540;
+    let freq = type === 'win' ? 880 : 520;
     if (type === 'draw') freq = 440;
     osc.frequency.value = freq;
-    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
     osc.start();
     osc.stop(audioCtx.currentTime + 0.5);
   }
 
-  // update UI scores
-  function updateScoresUI() {
+  // update score numbers on screen
+  function refreshScores() {
     xScoreSpan.innerText = scores.X;
     drawSpan.innerText = scores.draws;
     oScoreSpan.innerText = scores.O;
   }
 
-  // check win
+  // check if player won
   function checkWin(player) {
-    return wins.some(combo => combo.every(idx => board[idx] === player));
+    return winPatterns.some(combo => combo.every(idx => boardState[idx] === player));
   }
 
   function checkDraw() {
-    return board.every(cell => cell !== '');
+    return boardState.every(cell => cell !== '');
   }
 
-  // highlight winning cells
-  function highlightWin(player) {
-    wins.forEach(combo => {
-      if (combo.every(idx => board[idx] === player)) {
+  // highlight winning cells (just for fun)
+  function highlightWinning(player) {
+    winPatterns.forEach(combo => {
+      if (combo.every(idx => boardState[idx] === player)) {
         combo.forEach(idx => cells[idx].classList.add('win'));
       }
     });
@@ -432,44 +427,54 @@
     cells.forEach(cell => cell.classList.remove('win'));
   }
 
-  // show popup & play sound
-  function showPopup(winner) {
+  // show popup with clean icons: 🏆 for X, ✨ for O, 🤝 for draw
+  function showResultPopup(winner) {
     let msg = '', icon = '';
-    if (winner === 'X') { msg = '🏆 X wins!'; icon = '❌'; playSound('win'); }
-    else if (winner === 'O') { msg = '🤖 O wins!'; icon = '⚪'; playSound('win'); }
-    else { msg = '🤝 Draw!'; icon = '🎲'; playSound('draw'); }
-    modalMsg.innerText = msg;
-    modalIcon.innerText = icon;
-    modal.classList.add('show');
+    if (winner === 'X') {
+      msg = 'X Wins!';
+      icon = '🏆';
+      playBeep('win');
+    } else if (winner === 'O') {
+      msg = 'O Wins!';
+      icon = '✨';
+      playBeep('win');
+    } else {
+      msg = 'Draw!';
+      icon = '🤝';
+      playBeep('draw');
+    }
+    popupMsgSpan.innerText = msg;
+    popupIconSpan.innerText = icon;
+    popup.classList.add('show');
   }
 
-  function closeModal() {
-    modal.classList.remove('show');
+  function closePopup() {
+    popup.classList.remove('show');
   }
 
-  // end game: update scores, show popup
+  // end game: update scores, show popup, highlight
   function endGame(winner) {
-    gameActive = false;
+    gameLive = false;
     if (winner === 'X') {
       scores.X++;
-      highlightWin('X');
-      showPopup('X');
+      highlightWinning('X');
+      showResultPopup('X');
     } else if (winner === 'O') {
       scores.O++;
-      highlightWin('O');
-      showPopup('O');
+      highlightWinning('O');
+      showResultPopup('O');
     } else if (winner === 'draw') {
       scores.draws++;
-      showPopup('draw');
+      showResultPopup('draw');
     }
-    updateScoresUI();
+    refreshScores();
     statusDiv.innerText = winner === 'draw' ? "It's a draw!" : `${winner} wins!`;
   }
 
   // after a move, check win/draw
-  function handleGameEnd() {
-    if (checkWin(currentPlayer)) {
-      endGame(currentPlayer);
+  function checkGameOver() {
+    if (checkWin(turn)) {
+      endGame(turn);
       return true;
     }
     if (checkDraw()) {
@@ -479,10 +484,10 @@
     return false;
   }
 
-  // render board from array
+  // render board from state
   function renderBoard() {
     for (let i = 0; i < 9; i++) {
-      let val = board[i];
+      let val = boardState[i];
       cells[i].innerText = val;
       cells[i].classList.remove('x', 'o');
       if (val === 'X') cells[i].classList.add('x');
@@ -490,91 +495,89 @@
     }
   }
 
-  // reset the game (keep scores)
-  function resetGame() {
-    board.fill('');
-    currentPlayer = 'X';
-    gameActive = true;
+  // reset board without touching scores
+  function resetBoard() {
+    boardState.fill('');
+    turn = 'X';
+    gameLive = true;
     clearHighlights();
     renderBoard();
     statusDiv.innerText = "X's turn";
-    closeModal();
+    closePopup();
   }
 
-  // reset all scores + game
+  // full reset including scores
   function fullReset() {
     scores = { X: 0, O: 0, draws: 0 };
-    updateScoresUI();
-    resetGame();
+    refreshScores();
+    resetBoard();
   }
 
-  // human move
-  function makeMove(index) {
-    if (!gameActive) return false;
-    if (board[index] !== '') return false;
-    // if vs CPU and it's O's turn, human can't move (but we only call from click, so we check)
-    if (vsCPU && currentPlayer !== 'X') return false;
+  // human move (X always human, O is either human or AI)
+  function humanMove(idx) {
+    if (!gameLive) return false;
+    if (boardState[idx] !== '') return false;
+    if (vsComputer && turn !== 'X') return false;  // in CPU mode only X can click
 
-    board[index] = currentPlayer;
-    cells[index].innerText = currentPlayer;
-    cells[index].classList.add(currentPlayer === 'X' ? 'x' : 'o');
+    boardState[idx] = turn;
+    cells[idx].innerText = turn;
+    cells[idx].classList.add(turn === 'X' ? 'x' : 'o');
 
-    if (handleGameEnd()) return true;
+    if (checkGameOver()) return true;
 
-    // switch player
-    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-    statusDiv.innerText = `${currentPlayer}'s turn`;
+    // switch turn
+    turn = turn === 'X' ? 'O' : 'X';
+    statusDiv.innerText = `${turn}'s turn`;
 
     // if vs CPU and now it's O's turn, call AI
-    if (vsCPU && gameActive && currentPlayer === 'O') {
-      setTimeout(aiMove, 300);
+    if (vsComputer && gameLive && turn === 'O') {
+      setTimeout(aiMove, 280);
     }
     return true;
   }
 
-  // ---- AI moves ----
-  function getEmptyIndices() {
+  // ----- AI functions (simple but works) -----
+  function getEmptySpots() {
     let empty = [];
-    for (let i = 0; i < 9; i++) if (board[i] === '') empty.push(i);
+    for (let i = 0; i < 9; i++) if (boardState[i] === '') empty.push(i);
     return empty;
   }
 
   function randomMove() {
-    let empty = getEmptyIndices();
+    let empty = getEmptySpots();
     if (empty.length === 0) return null;
     return empty[Math.floor(Math.random() * empty.length)];
   }
 
   // medium: try to win or block
-  function mediumMove() {
-    // win for O
-    for (let combo of wins) {
+  function mediumAI() {
+    // try to win
+    for (let combo of winPatterns) {
       let [a,b,c] = combo;
-      if (board[a] === 'O' && board[b] === 'O' && board[c] === '') return c;
-      if (board[a] === 'O' && board[c] === 'O' && board[b] === '') return b;
-      if (board[b] === 'O' && board[c] === 'O' && board[a] === '') return a;
+      if (boardState[a] === 'O' && boardState[b] === 'O' && boardState[c] === '') return c;
+      if (boardState[a] === 'O' && boardState[c] === 'O' && boardState[b] === '') return b;
+      if (boardState[b] === 'O' && boardState[c] === 'O' && boardState[a] === '') return a;
     }
     // block X
-    for (let combo of wins) {
+    for (let combo of winPatterns) {
       let [a,b,c] = combo;
-      if (board[a] === 'X' && board[b] === 'X' && board[c] === '') return c;
-      if (board[a] === 'X' && board[c] === 'X' && board[b] === '') return b;
-      if (board[b] === 'X' && board[c] === 'X' && board[a] === '') return a;
+      if (boardState[a] === 'X' && boardState[b] === 'X' && boardState[c] === '') return c;
+      if (boardState[a] === 'X' && boardState[c] === 'X' && boardState[b] === '') return b;
+      if (boardState[b] === 'X' && boardState[c] === 'X' && boardState[a] === '') return a;
     }
     return null;
   }
 
-  // minimax for hard
+  // minimax for hard mode (simple but effective)
   function minimax(boardArr, depth, isMax) {
-    // check O win
-    let isOWin = wins.some(combo => combo.every(i => boardArr[i] === 'O'));
-    let isXWin = wins.some(combo => combo.every(i => boardArr[i] === 'X'));
+    let isOWin = winPatterns.some(combo => combo.every(i => boardArr[i] === 'O'));
+    let isXWin = winPatterns.some(combo => combo.every(i => boardArr[i] === 'X'));
     if (isOWin) return 10 - depth;
     if (isXWin) return depth - 10;
     if (boardArr.every(c => c !== '')) return 0;
     if (isMax) {
       let best = -Infinity;
-      for (let i=0;i<9;i++) {
+      for (let i = 0; i < 9; i++) {
         if (boardArr[i] === '') {
           boardArr[i] = 'O';
           let score = minimax(boardArr, depth+1, false);
@@ -585,7 +588,7 @@
       return best;
     } else {
       let best = Infinity;
-      for (let i=0;i<9;i++) {
+      for (let i = 0; i < 9; i++) {
         if (boardArr[i] === '') {
           boardArr[i] = 'X';
           let score = minimax(boardArr, depth+1, true);
@@ -597,14 +600,14 @@
     }
   }
 
-  function bestMove() {
+  function bestMoveHard() {
     let bestScore = -Infinity;
     let bestIdx = null;
-    for (let i=0;i<9;i++) {
-      if (board[i] === '') {
-        board[i] = 'O';
-        let score = minimax(board, 0, false);
-        board[i] = '';
+    for (let i = 0; i < 9; i++) {
+      if (boardState[i] === '') {
+        boardState[i] = 'O';
+        let score = minimax(boardState, 0, false);
+        boardState[i] = '';
         if (score > bestScore) {
           bestScore = score;
           bestIdx = i;
@@ -615,92 +618,91 @@
   }
 
   function aiMove() {
-    if (!gameActive) return;
-    if (currentPlayer !== 'O') return;
+    if (!gameLive) return;
+    if (turn !== 'O') return;
     let move = null;
-    if (difficulty === 'easy') move = randomMove();
-    else if (difficulty === 'medium') move = mediumMove() !== null ? mediumMove() : randomMove();
-    else move = bestMove();
-
+    if (difficulty === 'easy') {
+      move = randomMove();
+    } else if (difficulty === 'medium') {
+      move = mediumAI();
+      if (move === null) move = randomMove();
+    } else {
+      move = bestMoveHard();
+    }
     if (move !== null && move !== undefined) {
-      board[move] = 'O';
+      boardState[move] = 'O';
       cells[move].innerText = 'O';
       cells[move].classList.add('o');
-      if (handleGameEnd()) return;
-      currentPlayer = 'X';
+      if (checkGameOver()) return;
+      turn = 'X';
       statusDiv.innerText = "X's turn";
     }
   }
 
-  // ---- event handlers ----
-  function onCellClick(e) {
-    let idx = parseInt(e.currentTarget.getAttribute('data-idx'));
-    // enable audio on first click (user gesture)
-    if (!audioCtx) {
-      initAudio();
-      if (audioCtx) audioCtx.resume();
-    }
-    makeMove(idx);
-  }
-
-  cells.forEach(cell => cell.addEventListener('click', onCellClick));
-
-  newGameBtn.addEventListener('click', () => {
-    resetGame();
+  // ---- event listeners ----
+  cells.forEach(cell => {
+    cell.addEventListener('click', (e) => {
+      let idx = parseInt(cell.getAttribute('data-idx'));
+      // init audio on first click (user gesture)
+      if (!audioCtx) {
+        initAudio();
+        if (audioCtx) audioCtx.resume();
+      }
+      humanMove(idx);
+    });
   });
 
-  resetBtn.addEventListener('click', () => {
-    fullReset();
+  newGameBtn.addEventListener('click', resetBoard);
+  resetScoresBtn.addEventListener('click', fullReset);
+
+  friendBtn.addEventListener('click', () => {
+    vsComputer = false;
+    friendBtn.classList.add('active');
+    cpuBtn.classList.remove('active');
+    diffPanel.classList.remove('visible');
+    resetBoard();
   });
 
-  friendMode.addEventListener('click', () => {
-    vsCPU = false;
-    friendMode.classList.add('active');
-    computerMode.classList.remove('active');
-    diffBox.classList.remove('visible');
-    resetGame();
-  });
-
-  computerMode.addEventListener('click', () => {
-    vsCPU = true;
-    computerMode.classList.add('active');
-    friendMode.classList.remove('active');
-    diffBox.classList.add('visible');
-    resetGame();
+  cpuBtn.addEventListener('click', () => {
+    vsComputer = true;
+    cpuBtn.classList.add('active');
+    friendBtn.classList.remove('active');
+    diffPanel.classList.add('visible');
+    resetBoard();
   });
 
   diffSelect.addEventListener('change', (e) => {
     difficulty = e.target.value;
   });
 
-  // dark mode
-  let darkMode = localStorage.getItem('dark') === 'true';
-  function setDarkMode(on) {
-    if (on) document.body.classList.add('dark');
+  // dark mode (store in localStorage)
+  let darkEnabled = localStorage.getItem('darkMode') === 'true';
+  function applyDark(enabled) {
+    if (enabled) document.body.classList.add('dark');
     else document.body.classList.remove('dark');
-    localStorage.setItem('dark', on);
-    let icon = darkBtn.querySelector('i');
-    if (on) icon.className = 'fas fa-sun';
+    localStorage.setItem('darkMode', enabled);
+    let icon = darkToggle.querySelector('i');
+    if (enabled) icon.className = 'fas fa-sun';
     else icon.className = 'fas fa-moon';
   }
-  darkBtn.addEventListener('click', () => {
-    darkMode = !darkMode;
-    setDarkMode(darkMode);
+  darkToggle.addEventListener('click', () => {
+    darkEnabled = !darkEnabled;
+    applyDark(darkEnabled);
   });
-  setDarkMode(darkMode);
+  applyDark(darkEnabled);
 
-  // modal buttons
-  modalClose.addEventListener('click', closeModal);
-  modalPlayAgain.addEventListener('click', () => {
-    closeModal();
-    resetGame();
+  // popup buttons
+  closePopupBtn.addEventListener('click', closePopup);
+  playAgainPopupBtn.addEventListener('click', () => {
+    closePopup();
+    resetBoard();
   });
 
-  // initial
-  updateScoresUI();
-  resetGame();
+  // init
+  refreshScores();
+  resetBoard();
 
-  // Base SDK
+  // Base Mini App SDK init (required)
   const miniApp = new MiniAppSDK.MiniApp();
   miniApp.ready();
 </script>
