@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background:
+    radial-gradient(circle at 15% -10%, rgba(0, 82, 255, 0.25), transparent 45%),
+    radial-gradient(circle at 100% 10%, rgba(0, 230, 168, 0.12), transparent 40%),
+    #060a14;
+  background-attachment: fixed;
+  color: #eaf0ff;
+  min-height: 100vh;
+}
+
+@keyframes bulbFlicker {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.marquee-bulbs::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.55) 1.5px, transparent 1.6px);
+  background-size: 16px 100%;
+  background-position: 0 3px;
+  opacity: 0.5;
+  animation: bulbFlicker 2.4s steps(2, jump-none) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-bulbs::before {
+    animation: none;
+  }
+}
