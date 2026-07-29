@@ -37,7 +37,7 @@ export function SaveResultButton({ result }) {
 
   if (saved) {
     return (
-      <p className="text-center text-xs font-semibold text-mint">
+      <div className="badge-in rounded-2xl border border-emerald/20 bg-emerald/5 px-4 py-2.5 text-center text-xs font-semibold text-emerald">
         Saved onchain ✓{' '}
         {hash && (
           <a
@@ -49,7 +49,7 @@ export function SaveResultButton({ result }) {
             View on Basescan
           </a>
         )}
-      </p>
+      </div>
     );
   }
 
@@ -57,7 +57,7 @@ export function SaveResultButton({ result }) {
     return (
       <button
         onClick={() => switchChain({ chainId: baseSepolia.id })}
-        className="w-full rounded-full bg-baseblue px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 disabled:opacity-60"
+        className="w-full rounded-full bg-gradient-to-r from-indigo to-violet px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition-transform hover:-translate-y-0.5 disabled:opacity-60"
         disabled={isSwitching}
       >
         {isSwitching ? 'Switching…' : 'Switch to Base Sepolia'}
@@ -78,9 +78,9 @@ export function SaveResultButton({ result }) {
         });
       }}
       disabled={isPending || isConfirming}
-      className="w-full rounded-full bg-baseblue px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 disabled:opacity-60"
+      className="w-full rounded-full bg-gradient-to-r from-indigo to-violet px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition-transform hover:-translate-y-0.5 disabled:opacity-60"
     >
-      {isPending ? 'Confirm in wallet…' : isConfirming ? 'Confirming…' : '💾 Save result onchain'}
+      {isPending ? 'Confirm in wallet…' : isConfirming ? 'Confirming…' : 'Save result onchain'}
     </button>
   );
 }
