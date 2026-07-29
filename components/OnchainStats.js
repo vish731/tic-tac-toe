@@ -24,45 +24,49 @@ export function OnchainStats() {
 
   if (!isConnected) {
     return (
-      <p className="text-center text-xs text-cabinet-soft">
-        Connect your wallet to see your onchain record.
-      </p>
+      <div className="rounded-2xl border border-dashed border-line bg-canvas px-4 py-3 text-center">
+        <p className="text-xs text-faint">Connect your wallet to see your onchain record.</p>
+      </div>
     );
   }
 
   if (isLoading && data === undefined) {
-    return <p className="text-center text-xs text-cabinet-soft">Loading onchain record…</p>;
+    return (
+      <div className="rounded-2xl border border-line bg-canvas px-4 py-3 text-center">
+        <p className="text-xs text-faint">Loading onchain record…</p>
+      </div>
+    );
   }
 
   if (isError && data === undefined) {
     return (
-      <p className="text-center text-xs text-cabinet-soft">
-        Couldn&apos;t read the contract. Has it been deployed and configured yet?
-      </p>
+      <div className="rounded-2xl border border-line bg-canvas px-4 py-3 text-center">
+        <p className="text-xs text-faint">Couldn&apos;t read the contract yet.</p>
+      </div>
     );
   }
 
   const [wins, losses, draws] = data ?? [0n, 0n, 0n];
 
   return (
-    <div className="flex justify-between rounded-2xl border border-cabinet-border bg-cabinet-grid px-4 py-3 text-center">
-      <div className="flex-1">
-        <span className="block text-[0.65rem] font-semibold uppercase tracking-wider text-cabinet-soft">
-          Onchain Wins
-        </span>
-        <span className="font-display text-xl font-bold text-amber">{wins.toString()}</span>
-      </div>
-      <div className="flex-1">
-        <span className="block text-[0.65rem] font-semibold uppercase tracking-wider text-cabinet-soft">
-          Losses
-        </span>
-        <span className="font-display text-xl font-bold text-cabinet-text">{losses.toString()}</span>
-      </div>
-      <div className="flex-1">
-        <span className="block text-[0.65rem] font-semibold uppercase tracking-wider text-cabinet-soft">
-          Draws
-        </span>
-        <span className="font-display text-xl font-bold text-mint">{draws.toString()}</span>
+    <div className="flex items-center justify-between rounded-2xl border border-line bg-gradient-to-r from-indigo/5 to-violet/5 px-4 py-3">
+      <span className="flex items-center gap-1.5 text-[0.68rem] font-semibold uppercase tracking-wide text-faint">
+        <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-emerald" />
+        Onchain
+      </span>
+      <div className="flex gap-4 text-center">
+        <div>
+          <p className="font-display text-base font-extrabold text-indigo">{wins.toString()}</p>
+          <p className="text-[0.62rem] text-faint">Wins</p>
+        </div>
+        <div>
+          <p className="font-display text-base font-extrabold text-ink">{losses.toString()}</p>
+          <p className="text-[0.62rem] text-faint">Losses</p>
+        </div>
+        <div>
+          <p className="font-display text-base font-extrabold text-emerald">{draws.toString()}</p>
+          <p className="text-[0.62rem] text-faint">Draws</p>
+        </div>
       </div>
     </div>
   );
