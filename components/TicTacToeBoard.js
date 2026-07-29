@@ -85,6 +85,7 @@ export function TicTacToeBoard() {
   const [scores, setScores] = useState({ X: 0, Y: 0, draws: 0 });
   const [outcome, setOutcome] = useState(null);
   const [thinking, setThinking] = useState(false);
+  const [showBadge, setShowBadge] = useState(false);
 
   const winningLine = useMemo(() => {
     if (!outcome || outcome === 'draw') return [];
@@ -99,6 +100,7 @@ export function TicTacToeBoard() {
     setCurrentPlayer('X');
     setGameActive(true);
     setOutcome(null);
+    setShowBadge(false);
   }
 
   function fullReset() {
@@ -106,18 +108,13 @@ export function TicTacToeBoard() {
     resetGame();
   }
 
-  function finishGame(next, winner) {
+  function announce(next, result) {
     setGameActive(false);
-    setOutcome(winner);
-    setScores((s) => ({ ...s, [winner]: s[winner] + 1 }));
+    setOutcome(result);
     setBoard(next);
-  }
-
-  function finishDraw(next) {
-    setGameActive(false);
-    setOutcome('draw');
-    setScores((s) => ({ ...s, draws: s.draws + 1 }));
-    setBoard(next);
+    setShowBadge(true);
+    if (result === 'draw') setScores((s) => ({ ...s, draws: s.draws + 1 }));
+    else setScores((s) => ({ ...s, [result]: s[result] + 1 }));
   }
 
   function aiRespond(afterBoard) {
@@ -133,14 +130,9 @@ export function TicTacToeBoard() {
       if (move === null) return;
 
       boardCopy[move] = 'Y';
-      if (checkWin(boardCopy, 'Y')) {
-        finishGame(boardCopy, 'Y');
-        return;
-      }
-      if (boardCopy.every((c) => c !== '')) {
-        finishDraw(boardCopy);
-        return;
-      }
+      if (checkWin(boardCopy, 'Y')) return announce(boardCopy, 'Y');
+      if (boardCopy.every((c) => c !== '')) return announce(boardCopy, 'draw');
+
       setBoard(boardCopy);
       setCurrentPlayer('X');
     }, 300);
@@ -153,145 +145,156 @@ export function TicTacToeBoard() {
     const next = [...board];
     next[idx] = currentPlayer;
 
-    if (checkWin(next, currentPlayer)) {
-      finishGame(next, currentPlayer);
-      return;
-    }
-    if (next.every((c) => c !== '')) {
-      finishDraw(next);
-      return;
-    }
+    if (checkWin(next, currentPlayer)) return announce(next, currentPlayer);
+    if (next.every((c) => c !== '')) return announce(next, 'draw');
 
     setBoard(next);
     const nextPlayer = currentPlayer === 'X' ? 'Y' : 'X';
     setCurrentPlayer(nextPlayer);
-
-    if (vsComputer && nextPlayer === 'Y') {
-      aiRespond(next);
-    }
+    if (vsComputer && nextPlayer === 'Y') aiRespond(next);
   }
 
-  const statusText = !gameActive
-    ? outcome === 'draw'
-      ? "It's a draw!"
-      : `${outcome} wins!`
-    : thinking
-    ? 'Computer is thinking…'
-    : `${currentPlayer}'s turn`;
-
-  // Result from the human player's (X's) point of view — this is what
-  // gets recorded onchain when playing against the computer.
   const humanResult =
     outcome === 'X' ? RESULT.WIN : outcome === 'Y' ? RESULT.LOSS : outcome === 'draw' ? RESULT.DRAW : null;
 
   return (
     <div className="mx-auto w-full max-w-md">
-      <div className="relative overflow-hidden rounded-t-3xl rounded-b-xl bg-gradient-to-r from-baseblue to-[#2E7CFF] px-5 py-4 shadow-[0_12px_30px_-10px_rgba(0,82,255,0.55)]">
-        <div className="marquee-bulbs pointer-events-none absolute inset-0" />
-        <h1 className="font-display relative z-10 flex items-center gap-2 text-lg font-bold text-white">
-          <span className="h-2 w-2 rounded-full bg-amber shadow-[0_0_8px_2px_#FFB020]" />
-          TIC · TAC · TOE
-        </h1>
+      {/* Header, echoes the dashboard's logo + product name */}
+      <div className="mb-5 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo to-violet shadow-soft">
+            <span className="font-display text-sm font-extrabold text-white">XO</span>
+          </div>
+          <span className="font-display text-lg font-extrabold text-ink">TicTacToe</span>
+        </div>
+        <div className="flex items-center gap-1.5 rounded-full border border-line bg-surface px-3 py-1.5 shadow-card">
+          <span className="pulse-dot h-2 w-2 rounded-full bg-emerald" />
+          <span className="text-xs font-semibold text-soft">
+            {!gameActive ? 'Round over' : thinking ? 'Thinking' : `${currentPlayer}'s turn`}
+          </span>
+        </div>
       </div>
 
-      <div className="rounded-b-3xl rounded-t-xl border border-cabinet-border bg-cabinet-card p-5 shadow-[0_20px_45px_-15px_rgba(0,82,255,0.35)]">
-        <div className="mb-4">
+      <div className="relative rounded-3xl border border-line bg-surface p-6 shadow-soft">
+        {/* Floating milestone badge — signature element, mirrors the dashboard's toast notifications */}
+        {showBadge && outcome && (
+          <div className="badge-in absolute -top-4 right-4 flex items-center gap-2 rounded-2xl border border-line bg-surface px-4 py-3 shadow-soft">
+            <span className="text-xl">{outcome === 'draw' ? '🤝' : '🏆'}</span>
+            <div>
+              <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-faint">
+                {outcome === 'draw' ? 'Draw' : 'Winner'}
+              </p>
+              <p className="font-display text-sm font-bold text-ink">
+                {outcome === 'draw' ? "It's a tie" : `${outcome} takes it`}
+              </p>
+            </div>
+          </div>
+        )}
+
+        <div className="mb-5">
           <OnchainStats />
         </div>
 
-        <div className="mb-3 flex gap-2 rounded-full border border-cabinet-border bg-cabinet-grid p-1">
+        {/* Mode toggle */}
+        <div className="mb-4 flex gap-1 rounded-full bg-canvas p-1">
           <button
             onClick={() => {
               setVsComputer(false);
               resetGame();
             }}
-            className={`flex-1 rounded-full py-2 text-sm font-semibold transition ${
-              !vsComputer ? 'bg-baseblue text-white shadow-[0_4px_14px_rgba(0,82,255,0.45)]' : 'text-cabinet-soft'
+            className={`flex-1 rounded-full py-2 text-sm font-semibold transition-all ${
+              !vsComputer ? 'bg-surface text-ink shadow-card' : 'text-soft hover:text-ink'
             }`}
           >
-            👥 2 Players
+            2 Players
           </button>
           <button
             onClick={() => {
               setVsComputer(true);
               resetGame();
             }}
-            className={`flex-1 rounded-full py-2 text-sm font-semibold transition ${
-              vsComputer ? 'bg-baseblue text-white shadow-[0_4px_14px_rgba(0,82,255,0.45)]' : 'text-cabinet-soft'
+            className={`flex-1 rounded-full py-2 text-sm font-semibold transition-all ${
+              vsComputer ? 'bg-surface text-ink shadow-card' : 'text-soft hover:text-ink'
             }`}
           >
-            💻 Vs Computer
+            Vs Computer
           </button>
         </div>
 
         {vsComputer && (
-          <div className="mb-4 flex justify-center">
-            <select
-              value={difficulty}
-              onChange={(e) => setDifficulty(e.target.value)}
-              className="rounded-full border border-cabinet-border bg-cabinet-cell px-4 py-2 text-sm text-cabinet-text"
-            >
-              <option value="easy">😊 Easy</option>
-              <option value="medium">⚖️ Medium</option>
-              <option value="hard">🔥 Hard</option>
-            </select>
+          <div className="mb-5 flex justify-center gap-2">
+            {['easy', 'medium', 'hard'].map((d) => (
+              <button
+                key={d}
+                onClick={() => setDifficulty(d)}
+                className={`rounded-full px-3.5 py-1.5 text-xs font-semibold capitalize transition-all ${
+                  difficulty === d
+                    ? 'bg-gradient-to-r from-indigo to-violet text-white shadow-soft'
+                    : 'border border-line text-soft hover:border-indigo/40 hover:text-ink'
+                }`}
+              >
+                {d}
+              </button>
+            ))}
           </div>
         )}
 
-        <div className="mb-4 flex justify-between rounded-2xl border border-cabinet-border bg-cabinet-grid px-4 py-3 text-center">
-          <div className="flex-1">
-            <span className="block text-[0.65rem] font-semibold uppercase tracking-wider text-cabinet-soft">
-              X Wins
-            </span>
-            <span className="font-display text-2xl font-bold text-amber">{scores.X}</span>
+        {/* Stat trio, echoes the dashboard's "10K+ / 99.9% / 50M+" row */}
+        <div className="mb-5 grid grid-cols-3 divide-x divide-line rounded-2xl border border-line bg-canvas py-3">
+          <div className="text-center">
+            <p className="font-display text-xl font-extrabold text-indigo">{scores.X}</p>
+            <p className="text-[0.68rem] font-medium text-faint">X Wins</p>
           </div>
-          <div className="flex-1">
-            <span className="block text-[0.65rem] font-semibold uppercase tracking-wider text-cabinet-soft">
-              Draws
-            </span>
-            <span className="font-display text-2xl font-bold text-cabinet-text">{scores.draws}</span>
+          <div className="text-center">
+            <p className="font-display text-xl font-extrabold text-ink">{scores.draws}</p>
+            <p className="text-[0.68rem] font-medium text-faint">Draws</p>
           </div>
-          <div className="flex-1">
-            <span className="block text-[0.65rem] font-semibold uppercase tracking-wider text-cabinet-soft">
-              Y Wins
-            </span>
-            <span className="font-display text-2xl font-bold text-mint">{scores.Y}</span>
+          <div className="text-center">
+            <p className="font-display text-xl font-extrabold text-emerald">{scores.Y}</p>
+            <p className="text-[0.68rem] font-medium text-faint">Y Wins</p>
           </div>
         </div>
 
-        <div className="font-display mb-4 rounded-full border border-cabinet-border bg-cabinet-grid py-2 text-center text-base font-semibold">
-          {statusText}
-        </div>
-
-        <div className="mb-5 grid grid-cols-3 gap-3">
+        {/* Board */}
+        <div className="mb-5 grid grid-cols-3 gap-2.5">
           {board.map((val, i) => {
             const isWinCell = winningLine.includes(i);
             return (
               <button
                 key={i}
                 onClick={() => playMove(i)}
-                className={`font-display aspect-square rounded-2xl border-2 text-5xl font-bold shadow-[inset_0_-3px_0_rgba(0,0,0,0.18)] transition active:scale-95 ${
-                  isWinCell ? 'border-baseblue bg-baseblue/10' : 'border-transparent bg-cabinet-cell hover:bg-[#182238]'
-                } ${val === 'X' ? 'text-amber' : val === 'Y' ? 'text-mint' : ''}`}
+                className={`font-display aspect-square rounded-2xl border text-4xl font-extrabold transition-all active:scale-95 ${
+                  isWinCell
+                    ? 'border-indigo/30 bg-gradient-to-br from-indigo/10 to-violet/10'
+                    : 'border-line bg-canvas hover:border-indigo/25 hover:bg-white'
+                }`}
               >
-                {val}
+                {val && (
+                  <span
+                    key={`${i}-${val}`}
+                    className={`mark-in inline-block ${val === 'X' ? 'text-indigo' : 'text-emerald'}`}
+                  >
+                    {val}
+                  </span>
+                )}
               </button>
             );
           })}
         </div>
 
-        <div className="mb-2 flex justify-center gap-3">
+        {/* Actions */}
+        <div className="mb-1 flex justify-center gap-2.5">
           <button
             onClick={resetGame}
-            className="rounded-full bg-baseblue px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+            className="rounded-full bg-gradient-to-r from-indigo to-violet px-5 py-2.5 text-sm font-semibold text-white shadow-soft transition-transform hover:-translate-y-0.5"
           >
-            🔄 New Game
+            New Game
           </button>
           <button
             onClick={fullReset}
-            className="rounded-full border border-cabinet-border px-4 py-2 text-sm font-semibold text-cabinet-text transition hover:-translate-y-0.5"
+            className="rounded-full border border-line px-5 py-2.5 text-sm font-semibold text-soft transition-all hover:border-ink/20 hover:text-ink"
           >
-            🗑️ Reset
+            Reset
           </button>
         </div>
 
@@ -300,8 +303,6 @@ export function TicTacToeBoard() {
             <SaveResultButton result={humanResult} />
           </div>
         )}
-
-        <p className="mt-4 text-center text-[0.7rem] text-cabinet-soft">Built on Base</p>
       </div>
     </div>
   );
