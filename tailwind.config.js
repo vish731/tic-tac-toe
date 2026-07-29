@@ -4,22 +4,23 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        baseblue: '#0052FF',
-        amber: '#FFB020',
-        mint: '#00E6A8',
-        cabinet: {
-          bg: '#060A14',
-          grid: '#0B1120',
-          card: '#0F1626',
-          border: '#1E293F',
-          cell: '#131C30',
-          text: '#EAF0FF',
-          soft: '#8CA0C7',
-        },
+        ink: '#12141C',
+        soft: '#6B7280',
+        faint: '#9CA3AF',
+        indigo: '#4F46E5',
+        violet: '#7C3AED',
+        emerald: '#16A34A',
+        surface: '#FFFFFF',
+        canvas: '#F7F8FC',
+        line: '#E7E9F3',
       },
       fontFamily: {
-        display: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
+        display: ['Manrope', 'system-ui', 'sans-serif'],
         body: ['Inter', 'system-ui', 'sans-serif'],
+      },
+      boxShadow: {
+        soft: '0 20px 45px -20px rgba(79,70,229,0.25)',
+        card: '0 1px 2px rgba(16,24,40,0.04), 0 1px 3px rgba(16,24,40,0.06)',
       },
     },
   },
