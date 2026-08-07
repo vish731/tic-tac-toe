@@ -29,8 +29,8 @@ export function Onboarding({ onStart }) {
           </span>
         </h1>
         <p className="mx-auto mb-6 max-w-xs text-sm text-soft">
-          Challenge a friend or the computer. Connect your wallet to save your vs-computer
-          results permanently on Base.
+          Connect your wallet to start. Every game you play against the computer can be saved
+          permanently on Base.
         </p>
 
         <div className="mb-6 grid grid-cols-1 gap-2.5 text-left">
@@ -38,7 +38,7 @@ export function Onboarding({ onStart }) {
             <span className="text-lg">👥</span>
             <div>
               <p className="text-sm font-semibold text-ink">2 Players</p>
-              <p className="text-xs text-faint">Pass the device, no wallet needed</p>
+              <p className="text-xs text-faint">Pass the device to a friend</p>
             </div>
           </div>
           <div className="flex items-center gap-3 rounded-2xl border border-line bg-canvas px-4 py-3">
@@ -52,7 +52,7 @@ export function Onboarding({ onStart }) {
             <span className="text-lg">💾</span>
             <div>
               <p className="text-sm font-semibold text-ink">Save onchain</p>
-              <p className="text-xs text-faint">Optional — requires a connected wallet</p>
+              <p className="text-xs text-faint">Every vs-computer result, on Base</p>
             </div>
           </div>
         </div>
@@ -63,15 +63,14 @@ export function Onboarding({ onStart }) {
 
         <button
           onClick={onStart}
-          className="w-full rounded-full bg-gradient-to-r from-indigo to-violet px-4 py-3 text-sm font-semibold text-white shadow-soft transition-transform hover:-translate-y-0.5"
+          disabled={!isConnected}
+          className="w-full rounded-full bg-gradient-to-r from-indigo to-violet px-4 py-3 text-sm font-semibold text-white shadow-soft transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0"
         >
           Start Playing →
         </button>
 
         {!isConnected && (
-          <p className="mt-3 text-xs text-faint">
-            You can also play without connecting — onchain saving just won&apos;t be available.
-          </p>
+          <p className="mt-3 text-xs text-faint">Connect your wallet above to start playing.</p>
         )}
       </div>
     </div>
